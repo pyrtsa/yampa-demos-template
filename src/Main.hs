@@ -15,4 +15,4 @@ demo = proc inp -> do
     pos <- mousePos -< inp
     lb <- lbDown -< inp
     returnA -< scene_ [rectangle_ 100 100 ! pos_ pos
-                                          ! color_ (if lb then green else red)]
+                                          ! colour_ (if lb then green else red)]

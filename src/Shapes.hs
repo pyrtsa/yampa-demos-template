@@ -17,20 +17,20 @@ data Shape = Circle Int
 
 data Object = Object { objShape :: Shape
                      , objPos   :: Position2
-                     , objColor :: Colour Double
+                     , objColour :: Colour Double
                      } deriving (Show, Eq)
 
 instance Default Object where
     def = Object { objShape = error "Object shape wasn't define"
                  , objPos   = origin
-                 , objColor = white
+                 , objColour = white
                  }
 
 -- It might worth to use lenses here in order to avoid building a
 -- poor version of them
 
 scene_ :: [Object] -> Object
-scene_ objs = def { objShape = Scene objs, objColor = black}
+scene_ objs = def { objShape = Scene objs, objColour = black}
 
 circle_ :: Int -> Object
 circle_ n = def { objShape = Circle n }
@@ -43,8 +43,8 @@ type AttributeSetter = Object -> Object
 pos_ :: Position2 -> AttributeSetter
 pos_ pos obj = obj { objPos = pos }
 
-color_ :: Colour Double -> AttributeSetter
-color_ color obj = obj { objColor = color }
+colour_ :: Colour Double -> AttributeSetter
+colour_ colour obj = obj { objColour = colour }
 
 (!) :: Object -> AttributeSetter -> Object
 (!) = flip ($)

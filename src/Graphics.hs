@@ -69,7 +69,7 @@ animate title width height sf = do
 renderObject :: SDL.Renderer -> Object -> IO ()
 renderObject renderer Object{..} = setRenderAttrs >> renderShape
     where setRenderAttrs = do
-              let (RGB r g b) = toSRGB24 objColor
+              let (RGB r g b) = toSRGB24 objColour
               SDL.setRenderDrawColor renderer (V4 r g b maxBound)
           renderShape = case objShape of
               Rectangle x y -> let (Point2 px py) = objPos in
