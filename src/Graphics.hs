@@ -37,7 +37,7 @@ animate title width height sf = do
     shouldStop      <- newIORef False
     lastInteraction <- newMVar =<< SDL.time
 
-    let senseInput _ = do
+    let senseInput _canBlock = do
             currentTime <- SDL.time
             dt <- (currentTime -) <$> swapMVar lastInteraction currentTime
             mEvent <- SDL.pollEvent

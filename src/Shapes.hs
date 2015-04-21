@@ -26,7 +26,7 @@ instance Default Object where
                  , objColor = white
                  }
 
--- It might worth to use lenses here in order to avoid building a 
+-- It might worth to use lenses here in order to avoid building a
 -- poor version of them
 
 scene_ :: [Object] -> Object

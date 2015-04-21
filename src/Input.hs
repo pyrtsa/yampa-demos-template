@@ -32,7 +32,7 @@ data AppInput = AppInput
     { inpMousePos   :: Position2        -- ^ Current mouse position
     , inpMouseLeft  :: Maybe Position2  -- ^ Left button currently down
     , inpMouseRight :: Maybe Position2  -- ^ Right button currently down
-    } 
+    }
 
 initAppInput :: AppInput
 initAppInput = AppInput { inpMousePos   = origin
