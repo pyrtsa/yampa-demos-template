@@ -1,6 +1,5 @@
 module Input
     ( AppInput
-    , WinInput
     , parseWinInput
     , mousePos
     , lbp
@@ -46,8 +45,6 @@ rbpPos = inpMouseRight ^>> edgeJust
 
 rbDown :: SF AppInput Bool
 rbDown = arr (isJust . inpMouseRight)
-
-type WinInput = Event SDL.EventPayload
 
 -- | Exported as abstract type. Fields are accessed with signal functions.
 data AppInput = AppInput

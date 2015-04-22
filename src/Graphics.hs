@@ -19,7 +19,7 @@ import           Linear.Affine (Point(..))
 import qualified SDL
 
 import Shapes
-import Input
+import Types
 
 animate :: Text                -- ^ window title
         -> Int                 -- ^ window width in pixels
