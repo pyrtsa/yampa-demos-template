@@ -24,6 +24,28 @@ import qualified SDL
 
 import Types
 
+-- <| Signal Functions |> --
+
+mousePos :: SF AppInput Position2
+mousePos = arr inpMousePos
+
+lbp :: SF AppInput (Event ())
+lbp = lbpPos >>^ tagWith ()
+
+lbpPos :: SF AppInput (Event Position2)
+lbpPos = inpMouseLeft ^>> edgeJust
+
+lbDown :: SF AppInput Bool
+lbDown = arr (isJust . inpMouseLeft)
+
+rbp :: SF AppInput (Event ())
+rbp = rbpPos >>^ tagWith ()
+
+rbpPos :: SF AppInput (Event Position2)
+rbpPos = inpMouseRight ^>> edgeJust
+
+rbDown :: SF AppInput Bool
+rbDown = arr (isJust . inpMouseRight)
 
 type WinInput = Event SDL.EventPayload
 
@@ -52,7 +74,7 @@ nextAppInput :: AppInput -> SDL.EventPayload -> AppInput
 nextAppInput inp (SDL.MouseMotionEvent { SDL.mouseMotionEventPos = P (V2 x y) }) =
     inp { inpMousePos = Point2 (fromIntegral x) (fromIntegral y) }
 nextAppInput inp ev@(SDL.MouseButtonEvent{}) = inp { inpMouseLeft  = lmb
-                                                     , inpMouseRight = rmb }
+                                                   , inpMouseRight = rmb }
     where motion = SDL.mouseButtonEventMotion ev
           button = SDL.mouseButtonEventButton ev
           pos    = inpMousePos inp
@@ -66,25 +88,3 @@ nextAppInput inp ev@(SDL.MouseButtonEvent{}) = inp { inpMouseLeft  = lmb
 
 nextAppInput inp _ = inp
 
--- <| Signal Functions |> --
-
-mousePos :: SF AppInput Position2
-mousePos = arr inpMousePos
-
-lbp :: SF AppInput (Event ())
-lbp = lbpPos >>^ tagWith ()
-
-lbpPos :: SF AppInput (Event Position2)
-lbpPos = inpMouseLeft ^>> edgeJust
-
-lbDown :: SF AppInput Bool
-lbDown = arr (isJust . inpMouseLeft)
-
-rbp :: SF AppInput (Event ())
-rbp = rbpPos >>^ tagWith ()
-
-rbpPos :: SF AppInput (Event Position2)
-rbpPos = inpMouseRight ^>> edgeJust
-
-rbDown :: SF AppInput Bool
-rbDown = arr (isJust . inpMouseRight)
