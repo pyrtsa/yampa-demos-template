@@ -1,4 +1,3 @@
-{-# LANGUAGE RecordWildCards #-}
 module Graphics
     ( animate
     ) where
@@ -67,12 +66,12 @@ animate title width height sf = do
               }
 
 renderObject :: SDL.Renderer -> Object -> IO ()
-renderObject renderer Object{..} = setRenderAttrs >> renderShape
+renderObject renderer obj = setRenderAttrs >> renderShape
     where setRenderAttrs = do
-              let (RGB r g b) = toSRGB24 objColour
+              let (RGB r g b) = toSRGB24 $ objColour obj
               SDL.setRenderDrawColor renderer (V4 r g b maxBound)
-          renderShape = case objShape of
-              Rectangle x y -> let (Point2 px py) = objPos in
+          renderShape = case objShape obj of
+              Rectangle x y -> let (Point2 px py) = objPos obj in
                   SDL.renderDrawRect renderer $
                                      SDL.Rectangle (P (V2 (toEnum $ floor px)
                                                           (toEnum $ floor py)))
@@ -80,4 +79,4 @@ renderObject renderer Object{..} = setRenderAttrs >> renderShape
               Scene objs -> do
                   SDL.renderClear renderer
                   mapM_ (renderObject renderer) objs
-              Circle{..} -> error "Not implemented"
+              Circle{} -> error "Not implemented"
