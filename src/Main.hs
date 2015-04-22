@@ -39,8 +39,8 @@ kick (Point2 tx ty) (Ball p v) = Ball p (v ^+^ impulse)
 
 fallingBall :: Ball -> SF a Ball
 fallingBall (Ball p0 v0) = lift2 Ball pos vel
-    where vel = constant gravity >>> integral >>^ (^+^ v0)
-          pos = vel              >>> integral >>^ (^+^ p0)
+    where vel = constant gravity >>> imIntegral v0
+          pos = vel              >>> imIntegral p0
 
 kickableBall :: Ball -> SF AppInput Ball
 kickableBall b0 =
