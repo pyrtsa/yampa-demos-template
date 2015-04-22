@@ -15,8 +15,12 @@ type Position = (Scalar, Scalar)
 main :: IO ()
 main = animate "Demo" 640 480 (parseWinInput >>> demo >>> render)
 
+-- | A ball will rest until the first click.
+--   After the click it starts to fall.
+--   The ball can be kicked with another click.
+--   Ball has no limits.
 demo :: SF AppInput Ball
-demo = kickableBall ball
+demo = switch (constant ball &&& lbp) (const $ kickableBall ball)
 
 gravity :: Vector
 gravity = (0, -200)
