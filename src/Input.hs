@@ -25,24 +25,31 @@ import Types
 
 -- <| Signal Functions |> --
 
+-- | Current mouse position
 mousePos :: SF AppInput Position2
 mousePos = arr inpMousePos
 
+-- | Events that indicate left button click
 lbp :: SF AppInput (Event ())
 lbp = lbpPos >>^ tagWith ()
 
+-- | Events that indicate left button click and are tagged with mouse position
 lbpPos :: SF AppInput (Event Position2)
 lbpPos = inpMouseLeft ^>> edgeJust
 
+-- | Is left button down
 lbDown :: SF AppInput Bool
 lbDown = arr (isJust . inpMouseLeft)
 
+-- | Events that indicate right button click
 rbp :: SF AppInput (Event ())
 rbp = rbpPos >>^ tagWith ()
 
+-- | Events that indicate right button click and are tagged with mouse position
 rbpPos :: SF AppInput (Event Position2)
 rbpPos = inpMouseRight ^>> edgeJust
 
+-- | Is right button down
 rbDown :: SF AppInput Bool
 rbDown = arr (isJust . inpMouseRight)
 
@@ -84,4 +91,3 @@ nextAppInput inp ev@(SDL.MouseButtonEvent{}) = inp { inpMouseLeft  = lmb
           (lmb,rmb) = inpMod $ (inpMouseLeft &&& inpMouseRight) inp
 
 nextAppInput inp _ = inp
-
