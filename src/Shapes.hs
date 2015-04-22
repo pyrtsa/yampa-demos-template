@@ -26,6 +26,9 @@ instance Default Object where
                  , objColour = white
                  }
 
+-- Terms are written with postfix '_' indicating data rather than code.
+-- (stolen from lucid)
+
 -- It might worth to use lenses here in order to avoid building a
 -- poor version of them
 
