@@ -8,6 +8,7 @@ module Input
     , rbp
     , rbpPos
     , rbDown
+    , quitEvent
     ) where
 
 import           Data.Maybe
@@ -53,17 +54,22 @@ rbpPos = inpMouseRight ^>> edgeJust
 rbDown :: SF AppInput Bool
 rbDown = arr (isJust . inpMouseRight)
 
+quitEvent :: SF AppInput (Event ())
+quitEvent = arr inpQuit >>> edge
+
 -- | Exported as abstract type. Fields are accessed with signal functions.
 data AppInput = AppInput
     { inpMousePos   :: Position2        -- ^ Current mouse position
     , inpMouseLeft  :: Maybe Position2  -- ^ Left button currently down
     , inpMouseRight :: Maybe Position2  -- ^ Right button currently down
+    , inpQuit       :: Bool             -- ^ SDL's QuitEvent
     }
 
 initAppInput :: AppInput
 initAppInput = AppInput { inpMousePos   = origin
                         , inpMouseLeft  = Nothing
                         , inpMouseRight = Nothing
+                        , inpQuit       = False
                         }
 
 
@@ -75,6 +81,7 @@ parseWinInput = accumHoldBy nextAppInput initAppInput
 -- | Compute next input
 --   FIXME: I am reinventing lenses once again
 nextAppInput :: AppInput -> SDL.EventPayload -> AppInput
+nextAppInput inp SDL.QuitEvent = inp { inpQuit = True }
 nextAppInput inp (SDL.MouseMotionEvent { SDL.mouseMotionEventPos = P (V2 x y) }) =
     inp { inpMousePos = Point2 (fromIntegral x) (fromIntegral y) }
 nextAppInput inp ev@(SDL.MouseButtonEvent{}) = inp { inpMouseLeft  = lmb

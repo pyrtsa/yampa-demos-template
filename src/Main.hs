@@ -14,7 +14,7 @@ type Vector = (Scalar, Scalar)
 type Position = (Scalar, Scalar)
 
 main :: IO ()
-main = animate "Demo" 640 480 (parseWinInput >>> demo >>> render)
+main = animate "Demo" 640 480 (parseWinInput >>> ((demo >>> render) &&& handleExit))
 
 -- | A ball will rest until the first click.
 --   After the click it starts to fall.
@@ -54,3 +54,8 @@ render = scene_ . (:[]) ^<< arr renderBall
     where renderBall (Ball (x,y) _) =
                 rectangle_ 100 100 ! pos_ (Point2 (640 - x) (480 - y))
                                    ! colour_ red
+
+-- | Returns False when there is a signal to exit
+--   You might also want to handle other signals here (e.g. Esc button press)
+handleExit :: SF AppInput Bool
+handleExit = quitEvent >>> arr isEvent

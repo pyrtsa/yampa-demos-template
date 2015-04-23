@@ -20,10 +20,14 @@ import qualified SDL
 import Shapes
 import Types
 
+-- | (Object to render, should the app exit)
+--   TODO: Datatype
+type WinOutput = (Object, Bool)
+
 animate :: Text                -- ^ window title
         -> Int                 -- ^ window width in pixels
         -> Int                 -- ^ window height in pixels
-        -> (SF WinInput Object) -- ^ signal function to animate
+        -> (SF WinInput WinOutput) -- ^ signal function to animate
         -> IO ()
 animate title width height sf = do
     SDL.initialize [SDL.InitVideo]
@@ -40,14 +44,14 @@ animate title width height sf = do
             currentTime <- SDL.time
             dt <- (currentTime -) <$> swapMVar lastInteraction currentTime
             mEvent <- SDL.pollEvent
-            writeIORef shouldStop (Just SDL.QuitEvent == (SDL.eventPayload <$> mEvent))
+            {-writeIORef shouldStop (Just SDL.QuitEvent == (SDL.eventPayload <$> mEvent))-}
             return (dt, Event . SDL.eventPayload <$> mEvent)
 
-        renderOutput changed obj = do
+        renderOutput changed (obj, shouldExit) = do
             when changed $ do
                 renderObject renderer obj
                 SDL.renderPresent renderer
-            readIORef shouldStop
+            return shouldExit
 
     reactimate (return NoEvent) senseInput renderOutput sf
 
