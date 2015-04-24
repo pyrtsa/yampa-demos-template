@@ -52,8 +52,8 @@ render :: SF Ball Object
 render = scene_ . (:[]) ^<< arr renderBall
     -- Here is your wooden rectangular ball, son. Go play with your buddies.
     where renderBall (Ball (x,y) _) =
-                rectangle_ 100 100 ! pos_ (Point2 (640 - x) (480 - y))
-                                   ! colour_ red
+                circle_ 100 ! pos_ (Point2 (640 - x) (480 - y))
+                            ! colour_ red
 
 -- | Returns False when there is a signal to exit
 --   You might also want to handle other signals here (e.g. Esc button press)
