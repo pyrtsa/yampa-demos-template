@@ -51,8 +51,8 @@ kickableBall b0 =
 render :: SF Ball Object
 render = scene_ . (:[]) ^<< arr renderBall
     -- Here is your wooden rectangular ball, son. Go play with your buddies.
-    where renderBall (Ball (x,y) _) =
-                circle_ 100 ! pos_ (Point2 (640 - x) (480 - y))
+    where renderBall (Ball pos _) =
+                circle_ 100 ! pos_ pos
                             ! colour_ red
 
 -- | Returns False when there is a signal to exit
