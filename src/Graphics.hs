@@ -29,7 +29,7 @@ animate :: Text                -- ^ window title
         -> Int                 -- ^ window height in pixels
         -> (SF WinInput WinOutput) -- ^ signal function to animate
         -> IO ()
-animate title width height sf = do
+animate title winWidth winHeight sf = do
     SDL.initialize [SDL.InitVideo]
     window <- SDL.createWindow title windowConf
     SDL.showWindow window
@@ -47,7 +47,7 @@ animate title width height sf = do
 
         renderOutput changed (obj, shouldExit) = do
             when changed $ do
-                renderObject renderer obj
+                renderObject renderer winHeight obj
                 SDL.renderPresent renderer
             return shouldExit
 
@@ -58,8 +58,8 @@ animate title width height sf = do
     SDL.quit
 
     where windowConf =
-              SDL.defaultWindow { SDL.windowSize = V2 (fromIntegral width)
-                                                      (fromIntegral height) }
+              SDL.defaultWindow { SDL.windowSize = V2 (fromIntegral winWidth)
+                                                      (fromIntegral winHeight) }
           rendererConf = SDL.RendererConfig
               { SDL.rendererAccelerated   = True
               , SDL.rendererSoftware      = False
@@ -67,22 +67,22 @@ animate title width height sf = do
               , SDL.rendererPresentVSync  = False
               }
 
-renderObject :: SDL.Renderer -> Object -> IO ()
-renderObject renderer obj = setRenderAttrs >> renderShape
+renderObject :: SDL.Renderer -> Int -> Object -> IO ()
+renderObject renderer winHeight obj = setRenderAttrs >> renderShape
     where setRenderAttrs = do
               let (RGB r g b) = toSRGB24 $ objColour obj
               SDL.setRenderDrawColor renderer (V4 r g b maxBound)
           renderShape = case objShape obj of
               Rectangle x y -> SDL.renderFillRect renderer $ Just $
                                      SDL.Rectangle (P (V2 (toEnum $ floor px)
-                                                          (toEnum $ floor py)))
+                                                          (toEnum $ winHeight - floor py)))
                                                    (V2 (toEnum x) (toEnum y))
               Scene objs -> do
                   SDL.renderClear renderer
-                  mapM_ (renderObject renderer) objs
+                  mapM_ (renderObject renderer winHeight) objs
               Circle r -> SDL.renderDrawPoints renderer $ Vector.fromList $
                                 map (\(x,y) -> P (V2 (toEnum x) (toEnum y))) $
-                                rasterCircle (floor px, floor py) r
+                                rasterCircle (floor px, winHeight - floor py) r
           (Point2 px py) = objPos obj
 
 rasterCircle :: (Num a, Ord a) => (a,a) -> a -> [(a,a)]
