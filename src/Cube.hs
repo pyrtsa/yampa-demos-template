@@ -47,35 +47,27 @@ data Pipe = Pipe { positionX :: Double
                  }
 
 -- < Cube signal functions > ---------------------------------------------------
--- | Dumb Cube just falls down. Doesn't react to anything as can be seen from type.
-dumbCube :: Cube -> SF a Cube
-dumbCube (Cube p0 v0) = lift2 Cube pos vel
+-- | Falling Cube just falls down. Doesn't react to anything as can be seen from type.
+fallingCube :: Cube -> SF a Cube
+fallingCube (Cube p0 v0) = lift2 Cube pos vel
     where vel = constant (-200)  >>> imIntegral v0
           pos = vel              >>> imIntegral p0
 
 -- | Yampy Cube flaps by a command received from AppInput
 yampyCube :: Cube -> SF AppInput Cube
-yampyCube b0 = kSwitch (dumbCube b0)
-                       (first lbpPos >>^ uncurry attach)
-                       (\_old (_, Cube p v) -> yampyCube (Cube p (v + 400)))
+yampyCube b0 = kSwitch (fallingCube b0)
+                       (first lbp >>^ uncurry tag)
+                       (\_old (Cube p v) -> yampyCube (Cube p (v + 400)))
               
 -- < Pipe signal functions > ---------------------------------------------------
 
 -- | Just a pipe. Moves from right to left.
 pipe :: Pipe -> SF a Pipe
-pipe (Pipe p0 h0) = lift2 Pipe pos (constant h0)
-    where pos = constant (-100) >>> imIntegral p0
-
--- | A pipe moves from left to right and then reappears at right.
--- FIXME: There must be a better way to write this
-reappearingPipe :: Pipe -> SF a Pipe
-reappearingPipe t0 = switch update change
-    where update = proc _ -> do
-              t <- pipe t0 -< ()
-              ev <- edge -< positionX t < 0 - pipeWidth
-              h <- pipeHeightGen -< ()
-              returnA -< (t, ev `tag` h)
-          change h = reappearingPipe (Pipe winWidth h)
+pipe (Pipe p0 h0) = pipeHeightGen >>> switch initial (pipe . Pipe p0)
+    where initial = proc h -> do
+              p <- imIntegral p0 -< -100
+              ev <- edge -< p < - pipeWidth
+              returnA -< (Pipe p h0, ev `tag` h)
 
 pipeHeightGen :: SF a Double
 pipeHeightGen = noiseR (0 + groundHeight + 20, winHeight - pipeGap - 20)
@@ -89,8 +81,8 @@ intro = switch (constant (Game initCube (Pipe winWidth 0)) &&& lbp)
 
 game :: Game -> SF AppInput Game
 game (Game cube0 pipe0) = kSwitch initial trigger new
-    where initial = lift2 Game (yampyCube cube0) (reappearingPipe pipe0)
-          trigger = snd ^>> (collision &&& identity) >>^ uncurry tag
+    where initial = lift2 Game (yampyCube cube0) (pipe pipe0)
+          trigger = snd ^>> lift2 tag collision identity
           new _old lastState = switch (constant lastState &&& lbp) (const intro)
 
 collision :: SF Game (Event ())
