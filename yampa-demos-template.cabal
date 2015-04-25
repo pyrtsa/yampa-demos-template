@@ -16,7 +16,7 @@ build-type:          Simple
 extra-source-files:  README.md
 cabal-version:       >=1.10
 
-executable yampa-demos-template
+executable yampa-demos-ball
     main-is:             Main.hs
     -- other-modules:       
     other-extensions:    RecordWildCards, Arrows, OverloadedStrings
@@ -28,6 +28,24 @@ executable yampa-demos-template
                        , sdl2 >=2.0
                        , data-default
                        , vector
+                       , random
+    hs-source-dirs:      src
+    ghc-options:         -Wall
+    default-language:    Haskell2010
+
+executable yampa-demos-yampy-cube
+    main-is:             Cube.hs
+    -- other-modules:       
+    other-extensions:    RecordWildCards, Arrows, OverloadedStrings
+    build-depends:       base >=4.6 && <5.0
+                       , Yampa >=0.9
+                       , colour >=2.0
+                       , text
+                       , linear >=1.0
+                       , sdl2 >=2.0
+                       , data-default
+                       , vector
+                       , random
     hs-source-dirs:      src
     ghc-options:         -Wall
     default-language:    Haskell2010
