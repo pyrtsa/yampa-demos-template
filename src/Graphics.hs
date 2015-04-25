@@ -73,7 +73,7 @@ renderObject renderer obj = setRenderAttrs >> renderShape
               let (RGB r g b) = toSRGB24 $ objColour obj
               SDL.setRenderDrawColor renderer (V4 r g b maxBound)
           renderShape = case objShape obj of
-              Rectangle x y -> SDL.renderDrawRect renderer $
+              Rectangle x y -> SDL.renderFillRect renderer $ Just $
                                      SDL.Rectangle (P (V2 (toEnum $ floor px)
                                                           (toEnum $ floor py)))
                                                    (V2 (toEnum x) (toEnum y))
