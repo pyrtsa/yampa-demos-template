@@ -35,11 +35,11 @@ instance Default Object where
 scene_ :: [Object] -> Object
 scene_ objs = def { objShape = Scene objs, objColour = black}
 
-circle_ :: Int -> Object
-circle_ n = def { objShape = Circle n }
+circle_ :: Double -> Object
+circle_ n = def { objShape = Circle (round n) }
 
-rectangle_ :: Int -> Int -> Object
-rectangle_ x y = def { objShape = Rectangle x y }
+rectangle_ :: Double -> Double -> Object
+rectangle_ x y = def { objShape = Rectangle (round x) (round y) }
 
 type AttributeSetter = Object -> Object
 
