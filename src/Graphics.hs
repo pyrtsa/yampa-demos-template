@@ -82,21 +82,37 @@ renderObject renderer winHeight obj = setRenderAttrs >> renderShape
                   mapM_ (renderObject renderer winHeight) objs
               Circle r -> SDL.renderDrawPoints renderer $ Vector.fromList $
                                 map (\(x,y) -> P (V2 (toEnum x) (toEnum y))) $
-                                rasterCircle (floor px, winHeight - floor py) r
+                                translate (floor px, winHeight - floor py) $
+                                rasterCircle  r
           (Point2 px py) = objPos obj
 
-rasterCircle :: (Num a, Ord a) => (a,a) -> a -> [(a,a)]
-rasterCircle (x0,y0) radius = step 0 radius (5 - 4 * radius)
-    where step x y m = (x0 + x, y0 + y)
-                     : (x0 + y, y0 + x)
-                     : (x0 - x, y0 + y)
-                     : (x0 - y, y0 + x)
-                     : (x0 + x, y0 - y)
-                     : (x0 + y, y0 - x)
-                     : (x0 - x, y0 - y)
-                     : (x0 - y, y0 - x)
-                     : cont
-            where cont | x <= y' = step (x+1) y' (m' + 8 * x + 4)
-                       | otherwise = []
-                  (y',m') | m > 0 = (y-1, m - 8 * y)
-                          | otherwise = (y,m)
+-- | Get octant points for a circle of given radius.
+octant :: (Num a, Ord a) => a -> [(a, a)]
+octant r = takeWhile inOctant . map fst $ iterate step ((r, 0), 1 - r)
+    where -- check if we are still in octant
+          inOctant (x, y) = x >= y
+
+          -- go to the next point in the circle
+          step ((x, y), e)
+              | e < 0     = ((x,     y + 1), e + 2 * (y + 1) + 1)
+              | otherwise = ((x - 1, y + 1), e + 2 * (y - x + 2) + 1)
+
+-- | Get quadrant points for a circle of given radius.
+-- To do that we just mirror octant with respect to x = y line.
+quadrant :: (Num a, Ord a) => a -> [(a, a)]
+quadrant r = octant r >>= mirror
+    where mirror (x, y) = [ (x, y), (y, x) ]
+
+-- | Get points of a circle of given radius.
+-- To do that we just mirror quadrant with respect to x = 0 and y = 0 lines.
+rasterCircle :: (Num a, Ord a) => a -> [(a, a)]
+rasterCircle r = quadrant r >>= mirror
+    where mirror (x, y) = [ (u, v) | u <- [x, -x], v <- [y, -y] ]
+
+-- | Move all points by a given vector.
+translate :: (Num a, Eq a) => (a, a) -> [(a, a)] -> [(a, a)]
+translate v = map (v .+)
+
+-- | Vector addition generalized for Num
+(.+) :: Num a => (a, a) -> (a, a) -> (a, a)
+(x, y) .+ (u, v) = (x + u, y + v)
