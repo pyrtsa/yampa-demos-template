@@ -1,6 +1,7 @@
 module Shapes where
 
 import FRP.Yampa.AffineSpace
+import FRP.Yampa.Point2 (Point2(..))
 
 import Data.Default
 import Data.Colour
@@ -43,8 +44,8 @@ rectangle_ x y = def { objShape = Rectangle (round x) (round y) }
 
 type AttributeSetter = Object -> Object
 
-pos_ :: Position2 -> AttributeSetter
-pos_ pos obj = obj { objPos = pos }
+pos_ :: (Double, Double) -> AttributeSetter
+pos_ (x, y) obj = obj { objPos = Point2 x y}
 
 colour_ :: Colour Double -> AttributeSetter
 colour_ colour obj = obj { objColour = colour }
