@@ -94,7 +94,7 @@ nextAppInput inp ev@(SDL.MouseButtonEvent{}) = inp { inpMouseLeft  = lmb
               (SDL.MouseButtonDown, SDL.ButtonLeft)  -> first (const (Just pos))
               (SDL.MouseButtonUp, SDL.ButtonRight)   -> second (const Nothing)
               (SDL.MouseButtonDown, SDL.ButtonRight) -> second (const (Just pos))
-              _                                      -> id *** id
+              _                                      -> id
           (lmb,rmb) = inpMod $ (inpMouseLeft &&& inpMouseRight) inp
 
 nextAppInput inp _ = inp

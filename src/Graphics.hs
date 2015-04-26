@@ -27,7 +27,7 @@ type WinOutput = (Object, Bool)
 animate :: Text                -- ^ window title
         -> Int                 -- ^ window width in pixels
         -> Int                 -- ^ window height in pixels
-        -> (SF WinInput WinOutput) -- ^ signal function to animate
+        -> SF WinInput WinOutput -- ^ signal function to animate
         -> IO ()
 animate title winWidth winHeight sf = do
     SDL.initialize [SDL.InitVideo]
