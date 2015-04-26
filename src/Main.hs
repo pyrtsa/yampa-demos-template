@@ -1,13 +1,11 @@
 {-# LANGUAGE Arrows, OverloadedStrings #-}
 import FRP.Yampa
-import FRP.Yampa.Point2
 import FRP.Yampa.Utilities
 import Data.Colour.Names
 
 import Graphics
 import Shapes
 import Input
-import Types
 
 type Scalar = Double
 type Vector = (Scalar, Scalar)
@@ -33,8 +31,8 @@ ball :: Ball
 ball = Ball (320, 240) (0, 0)
 
 -- | Kicks the ball in the direction of the specified point
-kick :: Position2 -> Ball -> Ball
-kick (Point2 tx ty) (Ball p v) = Ball p (v ^+^ impulse)
+kick :: Position -> Ball -> Ball
+kick (tx, ty) (Ball p v) = Ball p (v ^+^ impulse)
     where impulse = (tx,ty) ^-^ p
 
 fallingBall :: Ball -> SF a Ball

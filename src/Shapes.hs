@@ -1,13 +1,8 @@
 module Shapes where
 
-import FRP.Yampa.AffineSpace
-import FRP.Yampa.Point2 (Point2(..))
-
 import Data.Default
 import Data.Colour
 import Data.Colour.Names
-
-import Types
 
 type Frame = Object
 
@@ -16,14 +11,14 @@ data Shape = Circle Int
            | Scene [Object] -- ^ Not really a shape
            deriving (Show, Eq)
 
-data Object = Object { objShape :: Shape
-                     , objPos   :: Position2
+data Object = Object { objShape  :: Shape
+                     , objPos    :: (Double, Double)
                      , objColour :: Colour Double
                      } deriving (Show, Eq)
 
 instance Default Object where
     def = Object { objShape = error "Object shape wasn't define"
-                 , objPos   = origin
+                 , objPos   = (0, 0)
                  , objColour = white
                  }
 
@@ -45,7 +40,7 @@ rectangle_ x y = def { objShape = Rectangle (round x) (round y) }
 type AttributeSetter = Object -> Object
 
 pos_ :: (Double, Double) -> AttributeSetter
-pos_ (x, y) obj = obj { objPos = Point2 x y}
+pos_ pos obj = obj { objPos = pos }
 
 colour_ :: Colour Double -> AttributeSetter
 colour_ colour obj = obj { objColour = colour }

@@ -10,7 +10,6 @@ import           Data.Text (Text)
 import qualified Data.Vector.Storable as Vector
 
 import           FRP.Yampa
-import           FRP.Yampa.Point2
 
 import           Linear (V2(..), V4(..))
 import           Linear.Affine (Point(..))
@@ -84,7 +83,7 @@ renderObject renderer winHeight obj = setRenderAttrs >> renderShape
                                 map (\(x,y) -> P (V2 (toEnum x) (toEnum y))) $
                                 translate (floor px, winHeight - floor py) $
                                 rasterCircle  r
-          (Point2 px py) = objPos obj
+          (px, py) = objPos obj
 
 -- | Get octant points for a circle of given radius.
 octant :: (Num a, Ord a) => a -> [(a, a)]

@@ -14,8 +14,6 @@ module Input
 import           Data.Maybe
 
 import           FRP.Yampa
-import           FRP.Yampa.AffineSpace
-import           FRP.Yampa.Point2
 
 import           Linear (V2(..))
 import           Linear.Affine (Point(..))
@@ -27,7 +25,7 @@ import Types
 -- <| Signal Functions |> --
 
 -- | Current mouse position
-mousePos :: SF AppInput Position2
+mousePos :: SF AppInput (Double,Double)
 mousePos = arr inpMousePos
 
 -- | Events that indicate left button click
@@ -35,7 +33,7 @@ lbp :: SF AppInput (Event ())
 lbp = lbpPos >>^ tagWith ()
 
 -- | Events that indicate left button click and are tagged with mouse position
-lbpPos :: SF AppInput (Event Position2)
+lbpPos :: SF AppInput (Event (Double,Double))
 lbpPos = inpMouseLeft ^>> edgeJust
 
 -- | Is left button down
@@ -47,7 +45,7 @@ rbp :: SF AppInput (Event ())
 rbp = rbpPos >>^ tagWith ()
 
 -- | Events that indicate right button click and are tagged with mouse position
-rbpPos :: SF AppInput (Event Position2)
+rbpPos :: SF AppInput (Event (Double,Double))
 rbpPos = inpMouseRight ^>> edgeJust
 
 -- | Is right button down
@@ -59,14 +57,14 @@ quitEvent = arr inpQuit >>> edge
 
 -- | Exported as abstract type. Fields are accessed with signal functions.
 data AppInput = AppInput
-    { inpMousePos   :: Position2        -- ^ Current mouse position
-    , inpMouseLeft  :: Maybe Position2  -- ^ Left button currently down
-    , inpMouseRight :: Maybe Position2  -- ^ Right button currently down
-    , inpQuit       :: Bool             -- ^ SDL's QuitEvent
+    { inpMousePos   :: (Double, Double)        -- ^ Current mouse position
+    , inpMouseLeft  :: Maybe (Double, Double)  -- ^ Left button currently down
+    , inpMouseRight :: Maybe (Double, Double)  -- ^ Right button currently down
+    , inpQuit       :: Bool                    -- ^ SDL's QuitEvent
     }
 
 initAppInput :: AppInput
-initAppInput = AppInput { inpMousePos   = origin
+initAppInput = AppInput { inpMousePos   = (0, 0)
                         , inpMouseLeft  = Nothing
                         , inpMouseRight = Nothing
                         , inpQuit       = False
@@ -83,7 +81,7 @@ parseWinInput = accumHoldBy nextAppInput initAppInput
 nextAppInput :: AppInput -> SDL.EventPayload -> AppInput
 nextAppInput inp SDL.QuitEvent = inp { inpQuit = True }
 nextAppInput inp (SDL.MouseMotionEvent { SDL.mouseMotionEventPos = P (V2 x y) }) =
-    inp { inpMousePos = Point2 (fromIntegral x) (fromIntegral y) }
+    inp { inpMousePos = (fromIntegral x, fromIntegral y) }
 nextAppInput inp ev@(SDL.MouseButtonEvent{}) = inp { inpMouseLeft  = lmb
                                                    , inpMouseRight = rmb }
     where motion = SDL.mouseButtonEventMotion ev
