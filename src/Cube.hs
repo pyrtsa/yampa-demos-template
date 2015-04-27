@@ -98,10 +98,10 @@ gameOver collisionState = constant collisionState
 
 -- | We then switch between these stages
 demo :: SF AppInput Game
-demo = switch (intro &&& tap) $ \_ ->
-       switch (game >>> isGameOver) $ \g ->
-       switch (gameOver g &&& tap) $ \_ ->
-       demo
+demo =  switch (intro &&& tap) $
+  \_ -> switch (game >>> isGameOver) $
+  \g -> switch (gameOver g &&& tap) $
+  \_ -> demo
     where isGameOver = proc g -> do
               collisionEvent <- edge <<< arr checkCollision -< g
               returnA -< (g, collisionEvent `tag` g)
