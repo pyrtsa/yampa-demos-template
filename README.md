@@ -1,7 +1,5 @@
 # Building instructions
 
-## Linux
-
 - Have GHC-7.8 or newer
 - Have cabal-install
 - Have SDL 2.0.3 with library headers
