@@ -7,6 +7,7 @@
 - Have SDL 2.0.3 with library headers
   - If you don't have it, see [this instructions][build_sdl]
 - Get git version of `sdl2` haskell bindings:
+
   ```bash
   zudov@x200 ~/demo $ git clone "https://github.com/haskell-game/sdl2"
   Cloning into 'sdl2'...
@@ -22,7 +23,9 @@
   Building sdl2-2.0.0...
   Installed sdl2-2.0.0
   ```
+
 - Now you can finally build and run the demo:
+
   ```bash
   zudov@x200 ~/demo $ git clone "https://github.com/helsinki-frp/yampa-demos-template"
   Cloning into 'yampa-demos-template'...
