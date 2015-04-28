@@ -63,9 +63,11 @@ fallingCube (Cube p0 v0) = lift2 Cube pos vel
 
 -- | Yampy Cube flaps on a command received from AppInput
 yampyCube :: Cube -> SF AppInput Cube
-yampyCube b0 = kSwitch (fallingCube b0)
-                       (first tap >>^ uncurry tag)
-                       (\_old (Cube p v) -> yampyCube (Cube p (v + 400)))
+yampyCube cube0 = switch update (\(Cube p v) -> yampyCube (Cube p (v + 400)))
+    where update = proc inp -> do
+              cube <- fallingCube cube0 -< ()
+              tapEv <- tap -< inp
+              returnA -< (cube, tapEv `tag` cube)
               
 -- < Pipe signal functions > ---------------------------------------------------
 
